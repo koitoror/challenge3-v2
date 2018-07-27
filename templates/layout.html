@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>MyDiary</title>
+  <meta name="description" content="website description" />
+  <meta name="keywords" content="website keywords, website keywords" />
+  <meta http-equiv="content-type" content="text/html; charset=windows-1252" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+
+<body>
+  <div id="main">
+    
+    <div id="site_content">
+      <div id="content">
+         {%block content %}{% endblock %}
+      </div>
+    </div>
+    <div id="footer">
+      <p><a href="/">Home</a> | <a href="/entries">Dashboard</a> | <a href="contact.html">Contact Us</a></p>
+      <p>Copyright &copy; Daniel Kamar | <a href="koitor.github.io/UI">HTML5</a> | <a href="koitor.github.io/UI">CSS</a> | <a href="koitor.github.io/UI">design for koitor.github.io/UI</a></p>
+    </div>
+  </div>
+</body>
+</html>

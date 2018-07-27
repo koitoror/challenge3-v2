@@ -1,0 +1,727 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0",
+    "title": "MyDiary",
+    "description": "MyDiary provides a platform that brings diaries and individuals together by creating awareness for diaries and giving the users the ability to write entries about the diaries they have interacted with.",
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/apiaryio/polls-api/blob/master/LICENSE"
+    }
+  },
+  "host": "mydiary-k.herokuapp.com",
+  "basePath": "/api/v2",
+  "schemes": [
+    "https"
+  ],
+  "externalDocs": {
+    "description": "Check out Documentation for v1",
+    "url": "https://mydiary-k.herokuapp.com/"
+  },
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "paths": {
+    "/auth/register": {
+      "x-summary": "Register.",
+      "post": {
+        "summary": "Register (Sign up) new user",
+        "description": "Creates a new user. User must provide a valid email, username and strong password. Once there is no existing user with same name account is created and email activation is sent",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "The user to create.",
+            "schema": {
+              "$ref": "#/definitions/Register"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created, Check mail box to activate account"
+          },
+          "400": {
+            "description": "All Fields Required"
+          },
+          "401": {
+            "description": "Could not register user"
+          },
+          "409": {
+            "description": "Username / Email already taken OR Username has already been taken"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "x-summary": "Login",
+      "post": {
+        "summary": "Login registered user",
+        "description": "Closed endpoints require a valid Token to be included in the header of the request. A Token can be acquired from the Login response",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "login",
+            "description": "login user.",
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully logged in, Token Generated"
+          },
+          "400": {
+            "description": "All fields are required"
+          },
+          "401": {
+            "description": "Incorrect Username / Password"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/reset-password": {
+      "x-summary": "Reset",
+      "put": {
+        "summary": "Reset Password",
+        "description": "Resets Password related to the User whose Token is provided with the request",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "reset_password",
+            "description": "resets user password.",
+            "schema": {
+              "$ref": "#/definitions/Reset"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "description": "Auth token in header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "updated password"
+          },
+          "400": {
+            "description": "Provide a strong password"
+          },
+          "401": {
+            "description": "you need to be logged in first"
+          },
+          "403": {
+            "description": "passwords don't match"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/forgot-password": {
+      "x-summary": "Forgot Password",
+      "post": {
+        "summary": "forgot password",
+        "description": "user provides email used during registration. new password is sent to user's email",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "forgot password",
+            "description": "forgot password.",
+            "schema": {
+              "$ref": "#/definitions/Forgot-password"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email has been with reset password"
+          },
+          "409": {
+            "description": "No user exists with that email"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "x-summary": "Logout",
+      "delete": {
+        "summary": "Logout, End session",
+        "description": "End current session and invalidates token provided during login",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "description": "Auth token in header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "logged out"
+          },
+          "404": {
+            "description": "Already logged out"
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/users": {
+      "x-summary": "Get All Users",
+      "get": {
+        "summary": "List all users",
+        "responses": {
+          "200": {
+            "description": "List"
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{user_id}": {
+      "x-summary": "Get user info",
+      "get": {
+        "summary": "List user info",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the user",
+            "x-example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "user does not exist"
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{user_id}/diaries": {
+      "x-summary": "Get diaries of user",
+      "get": {
+        "summary": "List diaries by user ID",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the user",
+            "x-example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "user does not own a diary"
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/diaries/": {
+      "x-summary": "Get and Post diary",
+      "get": {
+        "summary": "Get all diaries",
+        "description": "Show all diaries the active User can access and with what permission level. Includes their own diary if they have one.",
+        "responses": {
+          "200": {
+            "description": "return all diaries"
+          },
+          "404": {
+            "description": "No diary create/found"
+          }
+        },
+        "tags": [
+          "Diaries"
+        ]
+      },
+      "post": {
+        "summary": "Register diary",
+        "description": "Create diary for the authenticated User if the diary name does not already exist.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "diary",
+            "description": "diary name.",
+            "schema": {
+              "$ref": "#/definitions/Diary"
+            }
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "Auth token in header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Diary created"
+          },
+          "401": {
+            "description": "Could not create new diary"
+          },
+          "409": {
+            "description": "Diary name already taken"
+          }
+        },
+        "tags": [
+          "Diaries"
+        ]
+      }
+    },
+    "/diaries/{diaryId}": {
+      "x-summary": "Get, Put and Delete diary",
+      "get": {
+        "summary": "get single diary",
+        "description": "get single diary",
+        "parameters": [
+          {
+            "name": "diaryId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the diary",
+            "x-example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List diary"
+          },
+          "404": {
+            "description": "Diary Not Found"
+          }
+        },
+        "tags": [
+          "Diaries"
+        ]
+      },
+      "put": {
+        "summary": "Update single diary",
+        "description": "Manipulates the diary that the Authenticated User has permissions to access.",
+        "parameters": [
+          {
+            "name": "diaryId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the diary",
+            "x-example": "1"
+          },
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "description": "Auth token in header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "update diary",
+            "description": "diary",
+            "schema": {
+              "$ref": "#/definitions/Diary"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Response will reflect back the updated information."
+          },
+          "401": {
+            "description": "Authorized User is not Owner of diary or not all fields have been filled"
+          },
+          "404": {
+            "description": "Diary Not Found"
+          }
+        },
+        "tags": [
+          "Diaries"
+        ]
+      },
+      "delete": {
+        "summary": "Delete a diary",
+        "description": "Allow the Authenticated User to delete their diary.",
+        "parameters": [
+          {
+            "name": "diaryId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the diary",
+            "x-example": "1"
+          },
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "description": "Auth token in header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diary Deleted"
+          },
+          "401": {
+            "description": "Authorized User is not Owner of diary"
+          },
+          "404": {
+            "description": "Diary Not Found"
+          }
+        },
+        "tags": [
+          "Diaries"
+        ]
+      }
+    },
+    "/diaries/{diaryId}/entries": {
+      "x-summary": "Get & Post entry",
+      "post": {
+        "summary": "Entry a diary",
+        "description": "Allow authenticated user to create a new entry for any diary",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "diary",
+            "description": "diary name.",
+            "schema": {
+              "$ref": "#/definitions/Entry"
+            }
+          },
+          {
+            "name": "diaryId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the diary",
+            "x-example": "1"
+          },
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "description": "Auth token in header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Could not create new entries"
+          }
+        },
+        "tags": [
+          "Entries"
+        ]
+      },
+      "get": {
+        "summary": "Get diary entries",
+        "description": "Get all entries in diary given the diary ID",
+        "parameters": [
+          {
+            "name": "diaryId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the diary",
+            "x-example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Entries"
+        ]
+      }
+    },
+    "/diaries/entries": {
+      "x-summary": "All entries",
+      "get": {
+        "summary": "Gets all entries",
+        "description": "Allow the Authenticated User to get all entries in MyDiary",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "description": "Auth token in header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Entries"
+        ]
+      }
+    },
+    "/diaries/{diaryId}/entries/{entryId}": {
+      "x-summary": "delete entry",
+      "delete": {
+        "summary": "Delete A Entry",
+        "description": "Allow the Authenticated User to delete their entry given diaryID and entryID",
+        "parameters": [
+          {
+            "name": "diaryId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the diary",
+            "x-example": "1"
+          },
+          {
+            "name": "entryId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of entry",
+            "x-example": "1"
+          },
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "description": "Auth token in header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Authorized User is not Owner of entry"
+          },
+          "404": {
+            "description": "Entry Not found"
+          }
+        },
+        "tags": [
+          "Entries"
+        ]
+      }
+    },
+    "/notifications": {
+      "x-summary": "Get notifications for current user",
+      "get": {
+        "summary": "get notifications",
+        "description": "get notifications",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "description": "Auth token in header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List notifications"
+          },
+          "404": {
+            "description": "user has no notifications"
+          }
+        },
+        "tags": [
+          "Notification"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "Register": {
+      "type": "object",
+      "required": [
+        "email",
+        "username",
+        "password",
+        "fullname"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "fullname": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "email": "kamarster@gmail.com",
+        "username": "koitoror",
+        "password": "123456",
+        "fullname": "daniel kamar"
+      }
+    },
+    "Login": {
+      "type": "object",
+      "required": [
+        "password",
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "username": "kamar",
+        "password": "123456"
+      }
+    },
+    "Reset": {
+      "type": "object",
+      "required": [
+        "password",
+        "old_password"
+      ],
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "old_password": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "password": "123456",
+        "old_password": "password123"
+      }
+    },
+    "Forgot-password": {
+      "type": "object",
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "email": "kamarster@gmail.com"
+      }
+    },
+    "Diary": {
+      "type": "object",
+      "required": [
+        "name",
+        "location",
+        "logo",
+        "category",
+        "bio"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "logo": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "name": "Fire Proof",
+        "location": "Los Angeles",
+        "logo": 42144,
+        "category": "Education",
+        "bio": "Lorem ipsum dolor sit amet, consectetur adipisicing elit"
+      }
+    },
+    "Entry": {
+      "type": "object",
+      "required": [
+        "title",
+        "desc"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "title": "Hey",
+        "desc": "Lorem ipsum dolor sit amet"
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Diary entries</h1>
+<p>July 2018</p>
+<table>
+<tr><th>Title</th><th>Entry</th></tr>
+{% for entry in entries %}
+<tr><td>{{entry['title']}}</td><td>{{entry['entry']}}</td></tr>
+{% endfor %}
+</table>
+<h2>Add an entry</h2>
+<form  method = "POST" action="{{url_for('mainIndex')}}">
+<table>
+<tr><td>Title</td><td><input type="text" id="title" name="title" size="35"></td></tr>
+<tr><td>Entry</td><td><input type="text" id="entry" name="entry" size="35"></td></tr>
+<tr><td></td><td><input type="submit" value="Add Entry" /></td></tr>  
+</table>
+{% endblock %}
